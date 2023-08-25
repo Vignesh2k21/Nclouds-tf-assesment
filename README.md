@@ -193,10 +193,10 @@ backend "s3" {
 ```
 
 * Then use following command
-> terraform init -migrate-state
+```terraform init -migrate-state```
 
 * Now use terrafrom destroy command 
-> terraform destroy -var-file="demo.tfvars"
+```terraform destroy -var-file="demo.tfvars" ```
 
 * Now all the resources will be destroyed except the S3 we need to clean up the bucket and delet the bucket manually.
 
