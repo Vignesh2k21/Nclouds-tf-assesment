@@ -173,8 +173,8 @@ provider "aws" {
 
 #### 3.3 Architecture diagram of the code we design should look like this:
  
+![Screenshot from 2023-08-25 13-33-40](https://github.com/Vignesh2k21/Nclouds-tf-assesment/assets/87553373/55b39363-bdfb-4d49-808d-9b272e50116f)
 
-![Alt text](<Screenshot from 2023-08-25 13-33-40.png>)
 
 #### 3.4
 
