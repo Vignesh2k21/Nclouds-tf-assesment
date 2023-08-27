@@ -44,7 +44,6 @@ $ tree complete-module/
 ├── README.md
 ├── main.tf
 ├── variables.tf
-├── backend.tf
 ├── demo.tfvars
 ├── provider.tf
 ├── ...
@@ -64,23 +63,24 @@ $ tree complete-module/
         ├── RDS.tf
         ├── variable
 ```
-##### 2.1 Why are we going for a module concept ?
-- when the infrastructure as code grows high in volume and more repeated resources are being written then we have to organize and optimize them. So this is the reason to use `modules`
+##### 2.1 Why are we going for a module concept?
+- When the infrastructure as code grows high in volume and more repeated resources are being written then we have to organize and optimize them. So this is the reason to use `modules`
 
 #### 2.2 What are those high volume and repeated resources mean ?
 - high volume ie, when we are at the end of our project we will be ending up by creating categories of resources such as Network, Compute, Database, Storage, IAM, etc. And each of this category has sereval resource so we are designing our IaC such a way that we create abstracts for each category of resource
 - repeated resources ie, we will be ending up creating multiple ec2 machine, iam roles, buckets etc. Inorder to not to repeat the `resource` and its dependent blocks everytime we need a same type of resource we are modularizing the resources
 
-## 3. Let's see how to execcute the TF script we have.
+## 3. Let's see how to execute the TF script we have.
 
 * On the above module structure our resource state file is going to be in the local, but our requirement is a remote backup. 
 * so we are going to create a S3 bucket and a Dynamodb and going to setup a remort backup using the following steps:
 
-We going to create a s3 and dynamodb which is named as backup.tf in the module.
+We going to create a s3 and dynamodb manually which is going to be out remote backend of out statefile.
 
-> Note: Before applying the backend.tf we need to mute the main.tf file so it won't create other resources.
-
-#### 3.1 backend.tf
+#### 3.1 s3 and dynamo db creation
+* You can use this script for creating S3 bucket and dynamodb in a separate terraform file or you can create resources manually.
+* I am going to use this script in a separate terraform file.
+  
 ```
 #s3 bucket creation
 resource "aws_s3_bucket" "statebackend" {
@@ -124,9 +124,9 @@ backend "s3" {
 }
 ```
 
-* Bucket is nothing but the name of s3 bucket we have created.
+* Bucket is nothing but the name of the s3 bucket we have created.
 * Dynamodb_table is the name of the table we have created.
-* Also need to provide the AWS region and the AWS profile, Also we need are going to encrypt the file or not.
+* Also need to provide the AWS region and the AWS profile, Also we need to encrypt the file or not?
 * After updating the above block the backend.tf file will look like the following code block.
 
 ```
@@ -155,7 +155,7 @@ provider "aws" {
 }
 ```
 
-> Now we are going to unmute the main file and initializes the working directory containing Terraform configuration files.
+> Now we are going to initialize the working directory containing Terraform configuration files.
 
  > use this command to apply our code -- terraform apply -var-file="demo.tfvars"
 
@@ -165,11 +165,11 @@ provider "aws" {
 
 * Terraform allows you to define variable files called *. tfvars to create a reusable file for all the variables for a project.
 
-* The differance between variable and tfvars is, variables.tf is where you declare your variables, while terraform. tfvars is where you assign values to those variables. In other words, variables.tf is like a form that needs to be filled out, and terraform.
+* The difference between variable and tfvars is, that variables.tf is where you declare your variables, while terraform. tfvars is where you assign values to those variables. In other words, variables.tf is like a form that needs to be filled out and terraform.
 
 ###  Understood *.tfvars, Correct !!!
 
-* Now lets back to out topic we have applied the code which is going to cratete a VPC,EC2, RDS.
+* Now let's back to our topic we have applied the code that is going to create a VPC, EC2, and RDS.
 
 #### 3.3 Architecture diagram of the code we design should look like this:
  
@@ -178,7 +178,7 @@ provider "aws" {
 
 #### 3.4
 
-* for cleaning up the environment we can migrate the state from s3 to local for that we need to mute the following from the provider,
+* For cleaning up the environment we can migrate the state from s3 to local For that we need to mute the following from the provider,
 
 
 ```
@@ -192,12 +192,12 @@ backend "s3" {
 }
 ```
 
-* Then use following command
+* Then use the following command
 ```terraform init -migrate-state```
 
-* Now use terrafrom destroy command 
+* Now use terraform destroy command 
 ```terraform destroy -var-file="demo.tfvars" ```
 
-* Now all the resources will be destroyed except the S3 we need to clean up the bucket and delet the bucket manually.
+* Now all the resources will be destroyed except the S3 we need to clean up the bucket and we can destroy the bucket.
 
 # That's it for this Hands-on! 
